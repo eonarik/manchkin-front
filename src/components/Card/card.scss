@@ -1,0 +1,136 @@
+.c-card {
+  position: relative;
+  transition: .3s;
+  user-select: none;
+  min-width: 32px;
+  min-height: 32px;
+    
+  &--close {
+    > .c-card__inner {
+      background-image: url('../../img/munxhkin_door-treasure.jpg');
+      background-size: auto 110%;
+    }
+
+    &.c-card--treasure {
+      > .c-card__inner {
+        background-color: #b16c09;
+        background-position: -95px -5px;
+      }
+    }
+    &.c-card--door {
+      > .c-card__inner {
+        background-color: #e2a159;
+        background-position: -3px -5px;
+      }
+    }
+  }
+
+  // &--open {
+  // }
+
+  &--zoomed,
+  &--scalable:hover {
+    z-index: 9;
+    transform: scale(2.2);
+
+    &[data-position="bottom"] {
+      transform: scale(2.2) translateY(-40px);
+    }
+    &[data-position="top"] {
+      transform: scale(2.2) translateY(40px);
+    }
+  }
+
+  &--animated {
+    animation: cardSlideUp .5s;
+  }
+
+  &--disabled {
+    opacity: 0.5;
+  }
+
+  &--treasure {
+    > .c-card__inner {
+      background-color: #f5c887;
+    }
+  }
+
+  &--door {
+    > .c-card__inner {
+      background-color: #fae8d4;
+      padding-bottom: 8px;
+    }
+  }
+  
+  &__inner {
+    position: relative;
+    width: 96px;
+    height: 136px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    background: #FFF;
+    text-align: center;
+    font-size: 6px;
+    line-height: 1;
+    padding: 4px 4px 16px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  &__title {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: .9;
+    margin-top: 2px;
+  }
+
+  // &__description {
+  // }
+  
+  &__damage {
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  &__rule {
+    font-size: 6px;
+    font-weight: 600;
+  }
+
+  &__bodyPart {
+    position: absolute;
+    left: 4px;
+    bottom: 2px;
+    font-size: 6px;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  &__cost {
+    position: absolute;
+    right: 4px;
+    bottom: 2px;
+    font-size: 6px;
+  }
+
+  &__judgement {
+    margin-top: 2px;
+  }
+}
+
+@keyframes cardSlideUp {
+  0% {
+    transform: scale(2.2) translateY(-142px);
+  }
+  100% {
+    transform: none;
+  }
+}

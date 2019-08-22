@@ -1,0 +1,78 @@
+.c-manchkin {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  padding: 32px;
+  background-color: rgba(#000, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s;
+
+  &--showed {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &__close {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    color: #FFF;
+    font-size: 32px;
+    line-height: 0;
+    cursor: pointer;
+  }
+
+  &__items,
+  &__properties {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &__item {
+    position: relative;
+    background: #FFF;
+    border: 1px solid #000;
+    border-radius: 10px;
+    width: 128px;
+    height: 168px;
+    margin: 32px 8px;
+    padding: 8px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--disabled {
+      background-color: #808080;
+    }
+
+    &__title {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 100%;
+      text-align: center;
+      color: #FFF;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    &__summary {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 100%;
+      text-align: center;
+      color: #1bdc1b;
+      font-weight: 600;
+      font-size: 18px;
+    }
+  }
+}

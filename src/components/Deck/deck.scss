@@ -1,0 +1,13 @@
+.c-deck {
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+
+  &__card {
+    margin: 0 4px;
+
+    &__count {
+      text-align: center;
+    }
+  }
+}
