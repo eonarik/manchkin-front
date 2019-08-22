@@ -11,10 +11,28 @@ import './board.scss';
 const Board = () => {
   const [dummyOpened, setDummyOpened] = useState(false);
   const {
+    player: {
+      level,
+      slots: {
+        items,
+      },
+    },
     selfPlayerIndex,
     setDraggedCard,
     handDecks,
   } = useContext(AppContext);
+
+  let summaryDamage = level;
+  for (let key in items) {
+    if (items[key].cards.length) {
+      summaryDamage += items[key].cards.reduce(
+        (sum, cur) => typeof cur.bonus === 'object'
+          ? sum + cur.bonus.value
+          : sum + (cur.bonus || 0),
+        0,
+      );
+    }
+  }
 
   return (
     <>
@@ -37,7 +55,9 @@ const Board = () => {
               <div
                 className="c-board__box__dummy"
                 onClick={() => setDummyOpened(!dummyOpened)}
-              >M</div>
+              >
+                Вы Mанчкин {summaryDamage} уровня
+              </div>
             )}
           </div>
         ))}

@@ -1,3 +1,4 @@
+export { default as Dwarf } from './Dwarf';
 export { default as Mongrel } from './Mongrel';
 export { default as Orc } from './Orc';
 export { default as Priest } from './Priest';

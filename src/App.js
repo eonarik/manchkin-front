@@ -11,7 +11,7 @@ export const AppContext = createContext();
 const allCardsArray = Object.values(cards);
 // удвоим карты
 allCardsArray.push(...allCardsArray);
-allCardsArray.push(...allCardsArray);
+// allCardsArray.push(...allCardsArray);
 
 const mixDeckDoors = shuffleArray(
   allCardsArray
@@ -43,13 +43,19 @@ for (let i = 0; i < 4; i++) {
 
 // only for testing!
 handDecks[2] = [];
-handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'hand_slider'), id: Math.random() });
-handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'rogue'), id: Math.random() });
+handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'mongrel'), id: Math.random() });
 handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'orc'), id: Math.random() });
-handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'wild_axe'), id: Math.random() });
-handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'rear_view_helmet'), id: Math.random() });
-handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'raincoat'), id: Math.random() });
-handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'sanctified_hammer_of_saint'), id: Math.random() });
+handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'dwarf'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'super_manchkin'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'rogue'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'warrior'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'hand_slider'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'rogue'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'orc'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'wild_axe'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'rear_view_helmet'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'raincoat'), id: Math.random() });
+// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'sanctified_hammer_of_saint'), id: Math.random() });
 
 // interface Buff {
 //   card: String;
@@ -60,7 +66,7 @@ const initialState = {
   // индекс игрока
   selfPlayerIndex: 2,
   player: {
-    buffs: [],
+    level: 1,
     slots: {
       items: {
         head: {
@@ -84,34 +90,39 @@ const initialState = {
           blocked: false,
         },
       },
+      buffs: [],
+      curses: [],
       race: [],
       cls: [],
     },
   },
+  trashDeckDoors: [],
+  trashDeckTreasures: [],
   handDecks,
   mixDeckDoors,
   mixDeckTreasures,
 };
 
 function appReducer(state, { type, payload }) {
+  let selfDeck = state.handDecks[state.selfPlayerIndex];
+  // удаляем c руки
+  let removeCardFromHandDeck = (id) => {
+    if (selfDeck.find((card) => card.id === id)) {
+      for (let j in selfDeck) {
+        if (selfDeck[j].id === id) {
+          selfDeck.splice(j, 1);
+          break;
+        }
+      }
+    }
+  }
+
   switch (type) {
     case 'makeNewItems':
       let {
         newItems,
         bodyPart,
       } = payload;
-      let selfDeck = state.handDecks[state.selfPlayerIndex];
-      // удаляем c руки
-      let removeCardFromHandDeck = (id) => {
-        if (selfDeck.find((card) => card.id === id)) {
-          for (let j in selfDeck) {
-            if (selfDeck[j].id === id) {
-              selfDeck.splice(j, 1);
-              break;
-            }
-          }
-        }
-      }
 
       for (let i in newItems) {
         let { id, bodyParts, blockedSlots, code, maked, subType } = newItems[i];
@@ -183,8 +194,16 @@ function appReducer(state, { type, payload }) {
         // если это карта расы
         if (subType === 'race') {
           let races = state.player.slots.race;
+          let buffs = state.player.slots.buffs;
           if (!races.find((item) => item.code === code)) {
-            races.push(newItems[i]);
+            // рас может быть две, только если вы полукровка
+            if (buffs.find((item) => item.code === 'mongrel')) {
+              races.push(newItems[i]);
+            } else {
+              // вернем в руку предыдущую расу
+              races.length && selfDeck.push(races.shift());
+              races.push(newItems[i]);
+            }
             // удаляем c руки
             removeCardFromHandDeck(newItems[i].id);
           }
@@ -192,8 +211,25 @@ function appReducer(state, { type, payload }) {
         // если это карта класса
         if (subType === 'cls') {
           let clses = state.player.slots.cls;
+          let buffs = state.player.slots.buffs;
           if (!clses.find((item) => item.code === code)) {
-            clses.push(newItems[i]);
+            // классов может быть два, только если вы суперманчкин
+            if (buffs.find((item) => item.code === 'super_manchkin')) {
+              clses.push(newItems[i]);
+            } else {
+              // вернем в руку предыдущий класс
+              clses.length && selfDeck.push(clses.shift());
+              clses.push(newItems[i]);
+            }
+            // удаляем c руки
+            removeCardFromHandDeck(newItems[i].id);
+          }
+        }
+        // если это положительный эффект
+        if (subType === 'buff') {
+          let buffs = state.player.slots.buffs;
+          if (!buffs.find((item) => item.code === code)) {
+            buffs.push(newItems[i]);
             // удаляем c руки
             removeCardFromHandDeck(newItems[i].id);
           }
@@ -208,6 +244,18 @@ function appReducer(state, { type, payload }) {
         ...state,
         draggedCard: payload,
       };
+    case 'trashCard':
+      let { trashDeckType, card } = payload;
+      if (trashDeckType === 'door') {
+        state.trashDeckDoors.push(card);
+      }
+      if (trashDeckType === 'treasure') {
+        state.trashDeckTreasures.push(card);
+      }
+      removeCardFromHandDeck(card.id);
+      return {
+        ...state,
+      }
     default:
       throw new Error();
   }
@@ -226,6 +274,13 @@ function App() {
     setDraggedCard: (card) => dispatch({
       type: 'setDraggedCard',
       payload: card,
+    }),
+    trashCard: (trashDeckType, card) => dispatch({
+      type: 'trashCard',
+      payload: {
+        trashDeckType,
+        card,
+      },
     }),
   };
 

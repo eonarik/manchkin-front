@@ -23,7 +23,7 @@ const getBodyPartsLocale = (bodyParts) => {
       bodyParts.indexOf('twoHands') !== -1
     ) return 'В 2 руки';
   }
-  return 'Unknown';
+  return '';
 };
 
 const getRaceLocale = (race) => {
@@ -35,7 +35,7 @@ const getRaceLocale = (race) => {
     case 'undead': return 'Андед';
     default:
   }
-  return 'Unknown';
+  return '';
 }
 
 const Card = ({
@@ -71,13 +71,13 @@ const Card = ({
     type === 'treasure'
     && (
       <>
-        {getBodyPartsLocale(bodyParts)}
+        {bodyParts && getBodyPartsLocale(bodyParts)}
         {subType === 'bigItem' && (<><br />Большой</>)}
       </>
     )
   );
   const judgementDescriptions = judgement
-    ? judgement.map((item) => item.description)
+    ? judgement.map((item) => item.description).filter((item) => item)
     : [];
   const raceDescription = race ? getRaceLocale(race) : undefined;
   const treasuresCount = typeof treasures === 'object' ? treasures.value : treasures;

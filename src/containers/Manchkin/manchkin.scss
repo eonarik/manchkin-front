@@ -44,10 +44,19 @@
     width: 128px;
     height: 168px;
     margin: 32px 8px;
-    padding: 8px 40px;
+    padding: 66px 16px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    flex-direction: column;
+
+    > .c-card {
+      > .c-card__inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
 
     &--disabled {
       background-color: #808080;
@@ -58,10 +67,12 @@
       width: 100%;
       left: 0;
       bottom: 100%;
+      padding-bottom: 4px;
       text-align: center;
       color: #FFF;
       font-weight: 600;
-      font-size: 18px;
+      font-size: 16px;
+      line-height: 1.1;
     }
 
     &__summary {

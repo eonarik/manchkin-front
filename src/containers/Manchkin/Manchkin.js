@@ -88,6 +88,20 @@ const Manchkin = ({
           code={'cls'}
           name={'Класс'}
         />
+        <ManchkinItem
+          draggedCard={draggedCard}
+          makeCard={(card) => makeCard(null, card)}
+          makedItems={slots.buffs}
+          code={'buff'}
+          name={'Положительные эффекты'}
+        />
+        <ManchkinItem
+          draggedCard={draggedCard}
+          makeCard={(card) => makeCard(null, card)}
+          makedItems={slots.curses}
+          code={'curse'}
+          name={'Проклятия'}
+        />
       </div>
     </div>
   );

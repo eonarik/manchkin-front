@@ -10,13 +10,15 @@ const Deck = () => {
   const {
     mixDeckDoors,
     mixDeckTreasures,
+    trashDeckDoors,
+    trashDeckTreasures,
   } = useContext(AppContext);
   return (
     <div className="c-deck">
-      <DeckCards type={'door'} cards={[]} open />
+      <DeckCards type={'door'} cards={trashDeckDoors} open />
       <DeckCards type={'door'} cards={mixDeckDoors} />
       <DeckCards type={'treasure'} cards={mixDeckTreasures} />
-      <DeckCards type={'treasure'} cards={[]} open />
+      <DeckCards type={'treasure'} cards={trashDeckTreasures} open />
     </div>
   );
 }

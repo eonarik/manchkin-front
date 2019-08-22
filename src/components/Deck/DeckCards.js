@@ -1,16 +1,40 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import Card from 'components/Card';
+import { AppContext } from 'App';
 
 const DeckCards = ({
   cards,
   open,
   type,
 }) => {
+  const {
+    draggedCard,
+    trashCard,
+  } = useContext(AppContext);
+
+  const dragDrop = () => {
+    if (type === draggedCard.type) {
+      trashCard(type, draggedCard);
+    }
+  }
+  const dragEnter = (event) => {
+    event.preventDefault();
+    return true;
+  }
+  const dragOver = (event) => {
+    event.preventDefault();
+  }
+
   return (
-    <div className="c-deck__card">
+    <div
+      className="c-deck__card"
+      onDragEnter={dragEnter}
+      onDragOver={dragOver}
+      onDrop={dragDrop}
+    >
       <Card
-        type={type}
+        {...cards[cards.length - 1]}
         empty={!cards || !cards.length}
         open={open}
         scalable={false}
