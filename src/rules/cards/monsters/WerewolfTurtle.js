@@ -8,27 +8,24 @@ export default {
   properties: [
     {
       type: 'buff',
-      bonus: {
-        type: 'runaway',
-        value: -1,
-        target: 'enemy',
-      },
+      effect: 'runaway',
+      value: -1,
+      target: 'enemy',
     },
   ],
-  judgement: [
+  badStuff: [
     {
       type: 'curse',
-      bonus: {
-        type: 'discard',
-        value: -1,
-        cardTypes: 'race',
-        target: 'enemy',
-      },
-      description: `Если тебя даже Черепахи-оборотни догоняют, 
-      тебя из рядов своей расы изгоняют. Простой человек влиянию не поддается, 
-      а Полукровка теряет 1 нечеловеческую расу.`,
+      effect: 'discard',
+      value: -1,
+      cardTypes: 'race',
+      target: 'enemy',
+      description: `Если тебя даже Черепахи-оборотни догоняют, тебя из рядов своей расы изгоняют. Простой человек влиянию не поддается, а Полукровка теряет 1 нечеловеческую расу.`,
     },
   ],
-  treasures: 2,
+  rewards: {
+    treasures: 2,
+    levels: 1,
+  },
   collection: 'classic',
 }

@@ -6,17 +6,14 @@ import { AppContext } from 'App';
 const DeckCards = ({
   cards,
   open,
-  type,
 }) => {
   const {
     draggedCard,
-    trashCard,
+    discard,
   } = useContext(AppContext);
 
   const dragDrop = () => {
-    if (type === draggedCard.type) {
-      trashCard(type, draggedCard);
-    }
+    discard(draggedCard.id);
   }
   const dragEnter = (event) => {
     event.preventDefault();

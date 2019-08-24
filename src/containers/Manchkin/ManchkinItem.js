@@ -8,6 +8,7 @@ const ManchkinItem = ({
   code,
   name,
   blocked,
+  discard,
   draggedCard,
   makeCard,
   makedItems,
@@ -16,12 +17,10 @@ const ManchkinItem = ({
     (
       draggedCard
       && (
-        (
-          draggedCard.bodyParts && Array.isArray(draggedCard.bodyParts)
-            ? draggedCard.bodyParts.indexOf(code) === -1
-            : draggedCard.bodyParts !== code
-        )
-        && draggedCard.subType !== code
+        // шмотка должна соотвествовать типу
+        draggedCard.bodyParts && draggedCard.bodyParts.length
+          ? draggedCard.bodyParts.indexOf(code) === -1
+          : draggedCard.type !== code
       )
     )
     || blocked
@@ -69,6 +68,7 @@ const ManchkinItem = ({
           key={card.id}
           {...card}
           maked={code}
+          onClose={() => discard(card.id)}
           position={'top'}
           open
         />

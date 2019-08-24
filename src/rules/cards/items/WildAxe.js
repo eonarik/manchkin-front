@@ -1,13 +1,14 @@
 export default {
   code: 'wild_axe',
   name: 'Дикий топор',
-  type: 'treasure',
-  subType: 'bigItem',
+  kind: 'treasure',
+  type: 'bigItem',
   bonus: 5,
   bodyParts: ['rightHand', 'leftHand'],
   rules: [
     {
-      condition: ({ cls }) => cls === 'warrior',
+      type: 'cls',
+      value: 'warrior',
       description: 'Только для Воинов.',
     },
   ],

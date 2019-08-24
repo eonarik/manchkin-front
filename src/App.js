@@ -11,51 +11,53 @@ export const AppContext = createContext();
 const allCardsArray = Object.values(cards);
 // удвоим карты
 allCardsArray.push(...allCardsArray);
-// allCardsArray.push(...allCardsArray);
+allCardsArray.push(...allCardsArray);
 
-const mixDeckDoors = shuffleArray(
-  allCardsArray
-    // выберем только двери
-    .filter(({ type }) => type === 'door')
-    .map((item) => ({ id: Math.random(), ...item }))
-);
-const mixDeckTreasures = shuffleArray(
-  allCardsArray
-    // выберем только сокровища
-    .filter(({ type }) => type === 'treasure')
-    .map((item) => ({ id: Math.random(), ...item }))
+// перемешаем колоду, заодно добавим id для каждой карты
+const mixDeck = shuffleArray(allCardsArray).map(
+  (item) => ({ ...item, id: Math.random(), })
 );
 
 // раздаем всем игрокам по 4 карты сокровищ и 4 карты дверей
-const handDecks = [];
-for (let i = 0; i < 4; i++) {
-  // даем карту дверей i-му игроку
+// принадлежность игроку будет определяться свойством playerIndex
+const playersCount = 6;
+for (let i = 1; i < playersCount; i++) {
   for (let j = 0; j < 4; j++) {
-    if (!handDecks[i]) handDecks[i] = [];
-    mixDeckDoors.length && handDecks[i].push(mixDeckDoors.shift());
+    // вытащим первую ничейную карту двери
+    let card = mixDeck.find((card) => card.playerIndex === undefined && card.kind === 'door');
+    // установим кому принадлежит карта
+    card && Object.assign(card, {
+      playerIndex: i,
+    });
   }
-  // даем карту сокровищ i-му игроку
   for (let j = 0; j < 4; j++) {
-    if (!handDecks[i]) handDecks[i] = [];
-    mixDeckTreasures.length && handDecks[i].push(mixDeckTreasures.shift());
+    // вытащим первую ничейную карту сокровищ
+    let card = mixDeck.find((card) => card.playerIndex === undefined && card.kind === 'treasure');
+    // установим кому принадлежит карта
+    card && Object.assign(card, {
+      playerIndex: i,
+    });
   }
 }
 
-// only for testing!
-handDecks[2] = [];
-handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'mongrel'), id: Math.random() });
-handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'orc'), id: Math.random() });
-handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'dwarf'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'super_manchkin'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'rogue'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'warrior'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'hand_slider'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'rogue'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'orc'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'wild_axe'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'rear_view_helmet'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'raincoat'), id: Math.random() });
-// handDecks[2].push({ ...mixDeckTreasures.find((card) => card.code === 'sanctified_hammer_of_saint'), id: Math.random() });
+// only for test!
+const handDeck = ['raincoat', 'chainmail_bikini'];
+// const handDeck = ['sanctified_hammer_of_saint', 'wild_axe', 'hand_slider'];
+// const handDeck = ['super_manchkin', 'rogue', 'warrior', 'wizard'];
+// const handDeck = ['mongrel', 'orc', 'dwarf', 'elven'];
+for (let i = 0; i < handDeck.length; i++) {
+  let card = mixDeck.find((card) => card.code === handDeck[i]);
+  card.playerIndex = 0;
+}
+
+// проинициализируем всех игрроков
+const players = [];
+for (let i = 0; i < playersCount; i++) {
+  players.push({
+    level: 1,
+    blockedSlots: [],
+  });
+}
 
 // interface Buff {
 //   card: String;
@@ -64,177 +66,174 @@ handDecks[2].push({ ...mixDeckDoors.find((card) => card.code === 'dwarf'), id: M
 const initialState = {
   draggedCard: null,
   // индекс игрока
-  selfPlayerIndex: 2,
-  player: {
-    level: 1,
-    slots: {
-      items: {
-        head: {
-          cards: [],
-          blocked: false,
-        },
-        body: {
-          cards: [],
-          blocked: false,
-        },
-        rightHand: {
-          cards: [],
-          blocked: false,
-        },
-        leftHand: {
-          cards: [],
-          blocked: false,
-        },
-        foot: {
-          cards: [],
-          blocked: false,
-        },
-      },
-      buffs: [],
-      curses: [],
-      race: [],
-      cls: [],
-    },
-  },
-  trashDeckDoors: [],
-  trashDeckTreasures: [],
-  handDecks,
-  mixDeckDoors,
-  mixDeckTreasures,
+  selfPlayerIndex: 0,
+  players,
+  trashDeck: [],
+  mixDeck,
 };
 
 function appReducer(state, { type, payload }) {
-  let selfDeck = state.handDecks[state.selfPlayerIndex];
-  // удаляем c руки
-  let removeCardFromHandDeck = (id) => {
-    if (selfDeck.find((card) => card.id === id)) {
-      for (let j in selfDeck) {
-        if (selfDeck[j].id === id) {
-          selfDeck.splice(j, 1);
-          break;
+  const selfDeck = mixDeck.filter(
+    (card) => card.playerIndex === state.selfPlayerIndex
+  );
+  const selfPlayer = state.players[state.selfPlayerIndex];
+
+  const returnCardsToHand = (cards = []) => {
+    for (let i = 0; i < cards.length; i++) {
+      let card = cards[i];
+      // разблокируем слоты, занятые надетыми шмотками
+      if (
+        card.blockedSlots && card.blockedSlots.length
+        && selfPlayer.blockedSlots.length
+      ) {
+        for (let j = 0; j < card.blockedSlots.length; j++) {
+          let index = selfPlayer.blockedSlots.indexOf(card.blockedSlots[j]);
+          if (index !== -1) {
+            selfPlayer.blockedSlots.splice(index, 1);
+          }
         }
+      }
+      // уберем карты в руку
+      // убирая свойство makedSlot
+      delete card.makedSlot;
+    }
+  }
+  const makeItem = (card, bodyPart) => {
+    // проверим есть ли уже шмотки в указанном слоте
+    let makedItems = selfDeck.filter((card) => card.makedSlot === bodyPart);
+    if (makedItems && makedItems.length) {
+      // специальные условия
+      // суперманчкин - позволяет надеть сразу два класса
+      let isSuperManchkin = (
+        selfDeck.find((card) => card.code === 'super_manchkin' && card.makedSlot)
+        && bodyPart === 'cls'
+        && makedItems.length <= 1
+      );
+      // полукровка - позволяет иметь две расы
+      let isMongrel = (
+        selfDeck.find((card) => card.code === 'mongrel' && card.makedSlot)
+        && bodyPart === 'race'
+        && makedItems.length <= 1
+      );
+      // в шмотке стоит статус combine - можно совмещать с другими шмотками
+      let isCombine = (
+        card.combine
+      );
+      if (!isSuperManchkin && !isMongrel && !isCombine) {
+        // вернем в руку
+        returnCardsToHand(makedItems);
+      }
+    }
+    // надеваем шмотку
+    card.makedSlot = bodyPart;
+    // блокируем слоты
+    if (card.blockedSlots && card.blockedSlots.length) {
+      for (let j = 0; j < card.blockedSlots.length; j++) {
+        selfPlayer.blockedSlots.push(card.blockedSlots[j]);
+      }
+      // шмотки в заблокированных слотах прячем в руку
+      let itemsOfBlockedSlot = selfDeck.filter(
+        (card) => selfPlayer.blockedSlots.indexOf(card.makedSlot) !== -1
+      );
+      if (itemsOfBlockedSlot && itemsOfBlockedSlot.length) {
+        returnCardsToHand(itemsOfBlockedSlot);
       }
     }
   }
 
   switch (type) {
-    case 'makeNewItems':
+    case 'makeNewItem':
       let {
-        newItems,
+        id: cardId,
         bodyPart,
       } = payload;
+      let newItem = state.mixDeck.find((card) => card.id === cardId);
+      let {
+        bodyParts,
+        makedSlot,
+        type: cardType,
+      } = newItem;
 
-      for (let i in newItems) {
-        let { id, bodyParts, blockedSlots, code, maked, subType } = newItems[i];
-        // можно ли предмет одеть и одевается ли он на указанную часть тела
-        if (bodyParts && (
-          Array.isArray(bodyParts)
-            ? bodyParts.indexOf(bodyPart) !== -1
-            : bodyParts === bodyPart
-        )) {
-          let slot = state.player.slots.items[bodyPart];
-          // смотрим есть ли шмотка в слоте
-          if (slot.cards.length) {
-            // вернем надетые шмотки в руку
-            selfDeck.push(...slot.cards);
-            // разблокируем слоты, заблоченные надетыми шмотками
-            for (let j in slot.cards) {
-              let card = slot.cards[j];
-              if (card.blockedSlots) {
-                let unblockSlot = (itemSlot) => {
-                  // слот разблокируем,
-                  itemSlot.blocked = false;
-                }
-                if (Array.isArray(card.blockedSlots)) {
-                  for (let j in card.blockedSlots) {
-                    unblockSlot(state.player.slots.items[card.blockedSlots[j]]);
-                  }
-                } else {
-                  unblockSlot(state.player.slots.items[card.blockedSlots]);
-                }
-              }
-            }
-            // а слот очистим
-            slot.cards = [];
+      // входит ли шмотка в список допустимых для одевания предметов
+      if (
+        ['buff', 'cls', 'race', 'curse'].indexOf(cardType) !== -1
+        || (bodyParts && bodyParts.length)
+      ) {
+        // если указано, куда нужно одеть шмотку
+        if (bodyPart) {
+          if (
+            // слот не должен быть заблокированным
+            selfPlayer.blockedSlots.indexOf(bodyPart) === -1
+            // шмотка не должна быть уже одетой на этот слот
+            && makedSlot !== bodyPart
+            // шмотка должна соответствовать слоту
+            && (
+              bodyParts && bodyParts.length
+                ? bodyParts.indexOf(bodyPart) !== -1
+                : bodyPart === cardType
+            )
+          ) {
+            // надеваем шмотку
+            makeItem(newItem, bodyPart);
+          } else {
+            // при неудаче НЕ обновляем стейты
+            return state;
           }
-          // одеваем шмотку
-          slot.cards.push(newItems[i]);
-          // шмотка может прийти: с руки, с другого слота
-          removeCardFromHandDeck(id);
-          // удаляем c другого слота
-          if (maked) {
-            let makedCards = state.player.slots.items[maked].cards;
-            for (let j in makedCards) {
-              if (makedCards[j].id === id) {
-                makedCards.splice(j, 1);
-                break;
-              }
-            }
-            newItems[i].maked = undefined;
-          }
-          // смотрим блокирует ли шмотка другие слоты
-          if (blockedSlots) {
-            let blockSlot = (itemSlot) => {
-              // слот блокируем,
-              itemSlot.blocked = true;
-              // а надетые на него шмотки вернем в руку
-              selfDeck.push(...itemSlot.cards);
-              itemSlot.cards = [];
-            }
-            if (Array.isArray(blockedSlots)) {
-              for (let j in blockedSlots) {
-                blockSlot(state.player.slots.items[blockedSlots[j]]);
-              }
-            } else {
-              blockSlot(state.player.slots.items[blockedSlots]);
-            }
-            // TODO: нужно ли? создадим событие на дроп этой шмотки, чтобы разблокировать слот
-          }
+        } else {
+          // если не указано куда одевать, смотрим по типу карты
+          makeItem(newItem, cardType);
         }
-        // если это карта расы
-        if (subType === 'race') {
-          let races = state.player.slots.race;
-          let buffs = state.player.slots.buffs;
-          if (!races.find((item) => item.code === code)) {
-            // рас может быть две, только если вы полукровка
-            if (buffs.find((item) => item.code === 'mongrel')) {
-              races.push(newItems[i]);
-            } else {
-              // вернем в руку предыдущую расу
-              races.length && selfDeck.push(races.shift());
-              races.push(newItems[i]);
-            }
-            // удаляем c руки
-            removeCardFromHandDeck(newItems[i].id);
-          }
-        }
-        // если это карта класса
-        if (subType === 'cls') {
-          let clses = state.player.slots.cls;
-          let buffs = state.player.slots.buffs;
-          if (!clses.find((item) => item.code === code)) {
-            // классов может быть два, только если вы суперманчкин
-            if (buffs.find((item) => item.code === 'super_manchkin')) {
-              clses.push(newItems[i]);
-            } else {
-              // вернем в руку предыдущий класс
-              clses.length && selfDeck.push(clses.shift());
-              clses.push(newItems[i]);
-            }
-            // удаляем c руки
-            removeCardFromHandDeck(newItems[i].id);
-          }
-        }
-        // если это положительный эффект
-        if (subType === 'buff') {
-          let buffs = state.player.slots.buffs;
-          if (!buffs.find((item) => item.code === code)) {
-            buffs.push(newItems[i]);
-            // удаляем c руки
-            removeCardFromHandDeck(newItems[i].id);
-          }
-        }
+      } else {
+        // при неудаче НЕ обновляем стейты
+        return state;
       }
+
+      console.log(newItem)
+      console.log(selfDeck)
+
+      // // если это карта расы
+      // if (subType === 'race') {
+      //   let races = state.player.slots.race;
+      //   let buffs = state.player.slots.buffs;
+      //   if (!races.find((item) => item.code === code)) {
+      //     // рас может быть две, только если вы полукровка
+      //     if (buffs.find((item) => item.code === 'mongrel')) {
+      //       races.push(newItem);
+      //     } else {
+      //       // вернем в руку предыдущую расу
+      //       races.length && selfDeck.push(races.shift());
+      //       races.push(newItem);
+      //     }
+      //     // удаляем c руки
+      //     removeCardFromHandDeck(newItem.id);
+      //   }
+      // }
+      // // если это карта класса
+      // if (subType === 'cls') {
+      //   let clses = state.player.slots.cls;
+      //   let buffs = state.player.slots.buffs;
+      //   if (!clses.find((item) => item.code === code)) {
+      //     // классов может быть два, только если вы суперманчкин
+      //     if (buffs.find((item) => item.code === 'super_manchkin')) {
+      //       clses.push(newItem);
+      //     } else {
+      //       // вернем в руку предыдущий класс
+      //       clses.length && selfDeck.push(clses.shift());
+      //       clses.push(newItem);
+      //     }
+      //     // удаляем c руки
+      //     removeCardFromHandDeck(newItem.id);
+      //   }
+      // }
+      // // если это положительный эффект
+      // if (subType === 'buff') {
+      //   let buffs = state.player.slots.buffs;
+      //   if (!buffs.find((item) => item.code === code)) {
+      //     buffs.push(newItem);
+      //     // удаляем c руки
+      //     removeCardFromHandDeck(newItem.id);
+      //   }
+      // }
       return {
         ...state,
       };
@@ -244,15 +243,19 @@ function appReducer(state, { type, payload }) {
         ...state,
         draggedCard: payload,
       };
-    case 'trashCard':
-      let { trashDeckType, card } = payload;
-      if (trashDeckType === 'door') {
-        state.trashDeckDoors.push(card);
+    case 'discard':
+      let card = state.mixDeck.find((card) => card.id === payload.id);
+      // сбросим принадлежность карты
+      // тем самым удаляя из руки или инвентаря
+      delete card.playerIndex;
+      delete card.makedSlot;
+      // добавим карту в сброс
+      state.trashDeck.push(card);
+      // также удалим карту из используемых карт
+      let index = mixDeck.indexOf(card);
+      if (index !== -1) {
+        mixDeck.splice(index, 1);
       }
-      if (trashDeckType === 'treasure') {
-        state.trashDeckTreasures.push(card);
-      }
-      removeCardFromHandDeck(card.id);
       return {
         ...state,
       }
@@ -264,22 +267,24 @@ function appReducer(state, { type, payload }) {
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialState);
   const callbacks = {
-    makeNewItems: (bodyPart, newItems) => dispatch({
-      type: 'makeNewItems',
+    // одеть предмет на часть тела
+    makeNewItem: (id, bodyPart) => dispatch({
+      type: 'makeNewItem',
       payload: {
         bodyPart,
-        newItems,
+        id,
       },
     }),
+    // какая карта перемещается с помощью драг эн дроп
     setDraggedCard: (card) => dispatch({
       type: 'setDraggedCard',
       payload: card,
     }),
-    trashCard: (trashDeckType, card) => dispatch({
-      type: 'trashCard',
+    // сбросить карту
+    discard: (id) => dispatch({
+      type: 'discard',
       payload: {
-        trashDeckType,
-        card,
+        id,
       },
     }),
   };

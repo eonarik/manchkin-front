@@ -73,8 +73,27 @@
     font-size: 6px;
     line-height: 1;
     padding: 4px 4px 16px;
+    // pointer-events: none;
+
+    &:hover {
+      .c-card__close {
+        display: block;
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1;
+    color: #000;
+    font-size: 16px;
+    line-height: 16px;
+    display: none;
+    padding: 8px 8px 0;
+    cursor: pointer;
   }
 
   &__content {
@@ -92,8 +111,9 @@
     margin-top: 2px;
   }
 
-  // &__description {
-  // }
+  &__description {
+    white-space: pre-line;
+  }
   
   &__damage {
     font-size: 10px;
@@ -121,7 +141,7 @@
     font-size: 6px;
   }
 
-  &__judgement {
+  &__badStuff {
     margin-top: 2px;
   }
 }

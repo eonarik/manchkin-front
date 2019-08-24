@@ -2,32 +2,35 @@ export default {
   code: 'herbal_gnoll',
   level: 7,
   name: 'Травяной гнолль',
-  type: 'door',
-  subType: 'monster',
+  kind: 'door',
+  type: 'monster',
   properties: [
     {
       type: 'buff',
-      condition: ({ race }) => race === 'human',
-      bonus: {
-        type: 'level',
-        value: 5,
-        target: 'self',
-      },
+      effect: 'level',
+      value: 5,
+      target: 'self',
+      rules: [
+        {
+          type: 'race',
+          value: 'human',
+        },
+      ],
       description: `+5 против людей.`,
     },
   ],
-  judgement: [
+  badStuff: [
     {
       type: 'curse',
-      bonus: {
-        type: 'level',
-        value: -3,
-        target: 'enemy',
-      },
-      description: `Теряешь 3 уровня, за каждое <b>немедленно</b> 
-      сброшенное зелье можешь вернуть один уровень.`,
+      effect: 'level',
+      value: -3,
+      target: 'enemy',
+      description: `Теряешь 3 уровня, за каждое <b>немедленно</b> сброшенное зелье можешь вернуть один уровень.`,
     },
   ],
-  treasures: 2,
+  rewards: {
+    treasures: 2,
+    levels: 1,
+  },
   collection: 'classic',
 }

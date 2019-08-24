@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import Deck from 'components/Deck';
 import Card from 'components/Card';
@@ -11,28 +11,13 @@ import './board.scss';
 const Board = () => {
   const [dummyOpened, setDummyOpened] = useState(false);
   const {
-    player: {
-      level,
-      slots: {
-        items,
-      },
-    },
+    discard,
+    makeNewItem,
+    mixDeck,
+    players,
     selfPlayerIndex,
     setDraggedCard,
-    handDecks,
   } = useContext(AppContext);
-
-  let summaryDamage = level;
-  for (let key in items) {
-    if (items[key].cards.length) {
-      summaryDamage += items[key].cards.reduce(
-        (sum, cur) => typeof cur.bonus === 'object'
-          ? sum + cur.bonus.value
-          : sum + (cur.bonus || 0),
-        0,
-      );
-    }
-  }
 
   return (
     <>
@@ -40,25 +25,29 @@ const Board = () => {
         className="c-board"
         onDragEnd={() => setDraggedCard(null)}
       >
-        {handDecks.map((handDeck, playerIndex) => (
+        {players.map((player, playerIndex) => (
           <div key={playerIndex} className="c-board__box">
-            {handDeck.map((card, j) => (
-              <Card
-                key={card.id}
-                {...card}
-                open={selfPlayerIndex === playerIndex}
-                animated={selfPlayerIndex === playerIndex}
-                position={selfPlayerIndex === playerIndex ? 'bottom' : 'top'}
-              />
-            ))}
             {selfPlayerIndex === playerIndex && (
               <div
                 className="c-board__box__dummy"
                 onClick={() => setDummyOpened(!dummyOpened)}
               >
-                Вы Mанчкин {summaryDamage} уровня
-              </div>
+                Вы Mанчкин {player.level} уровня
+            </div>
             )}
+            <div className="c-board__box__inner">
+              {mixDeck.filter((card) => card.playerIndex === playerIndex && !card.makedSlot).map((card, j) => (
+                <Card
+                  key={card.id}
+                  {...card}
+                  onClick={() => makeNewItem(card.id, card.bodyParts && card.bodyParts[0])}
+                  onClose={selfPlayerIndex === card.playerIndex ? () => discard(card.id) : null}
+                  open={selfPlayerIndex === playerIndex}
+                  animated={selfPlayerIndex === playerIndex}
+                  position={selfPlayerIndex === playerIndex ? 'bottom' : 'top'}
+                />
+              ))}
+            </div>
           </div>
         ))}
         <div className="c-board__game">

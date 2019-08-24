@@ -1,19 +1,17 @@
 export default {
   code: 'you_shoelace_is_untied',
   name: 'У тебя шнурок развязался!',
-  description: `<center>Жертв этого бородатого розынрыша не сосчитаешь, а он до сих пор работает.<br />
-  Играть в любой бой. +3 любой стороне. Разовый прикол.</center>`,
+  description: `Жертв этого бородатого розынрыша не сосчитаешь, а он до сих пор работает.\nИграть в любой бой. +3 любой стороне. Разовый прикол.`,
   properties: [
     {
       type: 'buff',
-      bonus: {
-        type: 'damage',
-        value: 3,
-        target: ['monster', 'player'],
-      },
+      effect: 'damage',
+      value: 3,
+      target: ['monster', 'player'],
     },
   ],
-  type: 'treasure',
-  subType: 'single',
+  kind: 'treasure',
+  type: 'single',
+  charges: 1,
   collection: 'classic',
 }

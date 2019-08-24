@@ -29,6 +29,24 @@ const itemsSlots = {
     name: 'Обувка',
   },
 };
+const propertySlots = {
+  race: {
+    code: 'race',
+    name: 'Раса',
+  },
+  cls: {
+    code: 'cls',
+    name: 'Класс',
+  },
+  buff: {
+    code: 'buff',
+    name: 'Положительные эффекты',
+  },
+  curse: {
+    code: 'curse',
+    name: 'Проклятия',
+  },
+};
 
 const Manchkin = ({
   close,
@@ -36,16 +54,18 @@ const Manchkin = ({
 }) => {
   const {
     draggedCard,
+    discard,
+    makeNewItem,
+    mixDeck,
+    players,
+    selfPlayerIndex,
     setDraggedCard,
-    makeNewItems,
-    player: {
-      slots,
-    },
   } = useContext(AppContext);
+  const { blockedSlots } = players[selfPlayerIndex];
 
-  const makeCard = (bodyPart, card) => {
+  const makeCard = (card, bodyPart) => {
     // добавим новый предмет
-    makeNewItems(bodyPart, [card]);
+    makeNewItem(card.id, bodyPart);
     // обнулим draggedCard
     setDraggedCard(null);
   }
@@ -62,46 +82,34 @@ const Manchkin = ({
     >
       <div className="c-manchkin__close" onClick={close}>&times;</div>
       <div className="c-manchkin__items">
-        {Object.values(itemsSlots).map((item) => (
+        {Object.values(itemsSlots).map((slot) => (
           <ManchkinItem
-            key={item.code}
-            blocked={slots.items[item.code].blocked}
+            key={slot.code}
+            blocked={blockedSlots.indexOf(slot.code) !== -1}
             draggedCard={draggedCard}
-            makeCard={(card) => makeCard(item.code, card)}
-            makedItems={slots.items[item.code].cards}
-            {...item}
+            discard={discard}
+            makeCard={(card) => makeCard(card, slot.code)}
+            makedItems={mixDeck.filter(
+              (card) => card.playerIndex === selfPlayerIndex && card.makedSlot === slot.code
+            )}
+            {...slot}
           />
         ))}
       </div>
       <div className="c-manchkin__properties">
-        <ManchkinItem
-          draggedCard={draggedCard}
-          makeCard={(card) => makeCard(null, card)}
-          makedItems={slots.race}
-          code={'race'}
-          name={'Раса'}
-        />
-        <ManchkinItem
-          draggedCard={draggedCard}
-          makeCard={(card) => makeCard(null, card)}
-          makedItems={slots.cls}
-          code={'cls'}
-          name={'Класс'}
-        />
-        <ManchkinItem
-          draggedCard={draggedCard}
-          makeCard={(card) => makeCard(null, card)}
-          makedItems={slots.buffs}
-          code={'buff'}
-          name={'Положительные эффекты'}
-        />
-        <ManchkinItem
-          draggedCard={draggedCard}
-          makeCard={(card) => makeCard(null, card)}
-          makedItems={slots.curses}
-          code={'curse'}
-          name={'Проклятия'}
-        />
+        {Object.values(propertySlots).map((slot) => (
+          <ManchkinItem
+            key={slot.code}
+            blocked={blockedSlots.indexOf(slot.code) !== -1}
+            draggedCard={draggedCard}
+            discard={discard}
+            makeCard={(card) => makeCard(card, slot.code)}
+            makedItems={mixDeck.filter(
+              (card) => card.playerIndex === selfPlayerIndex && card.makedSlot === slot.code
+            )}
+            {...slot}
+          />
+        ))}
       </div>
     </div>
   );

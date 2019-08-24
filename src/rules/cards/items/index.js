@@ -1,4 +1,5 @@
 export { default as BabyOil } from './BabyOil';
+export { default as ChainmailBikini } from './ChainmailBikini';
 export { default as CowardicePotion } from './CowardicePotion';
 export { default as FlightPotion } from './FlightPotion';
 export { default as ItchingPowder } from './ItchingPowder';

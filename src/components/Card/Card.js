@@ -6,14 +6,6 @@ import { AppContext } from 'App';
 import './card.scss';
 
 const getBodyPartsLocale = (bodyParts) => {
-  switch (bodyParts) {
-    case 'head': return 'Головняк';
-    case 'rightHand': return 'В правую руку';
-    case 'leftHand': return 'В левую руку';
-    case 'body': return 'Броник';
-    case 'foot': return 'Обувка';
-    default:
-  }
   if (Array.isArray(bodyParts)) {
     if (
       bodyParts.indexOf('rightHand') !== -1
@@ -22,6 +14,17 @@ const getBodyPartsLocale = (bodyParts) => {
     if (
       bodyParts.indexOf('twoHands') !== -1
     ) return 'В 2 руки';
+    if (bodyParts.length === 1) {
+      bodyParts = bodyParts[0];
+    }
+  }
+  switch (bodyParts) {
+    case 'head': return 'Головняк';
+    case 'rightHand': return 'В правую руку';
+    case 'leftHand': return 'В левую руку';
+    case 'body': return 'Броник';
+    case 'foot': return 'Обувка';
+    default:
   }
   return '';
 };
@@ -42,6 +45,8 @@ const Card = ({
   scalable = true,
   animated,
   empty,
+  onClick,
+  onClose,
   open,
   position,
   zoomed,
@@ -52,12 +57,12 @@ const Card = ({
     bonus,
     cost,
     description,
-    judgement,
+    badStaff,
+    kind,
     level,
     name,
     race,
     rules,
-    subType,
     treasures,
     type,
   } = props;
@@ -68,16 +73,16 @@ const Card = ({
     ? rules.map((item) => item.description)
     : [];
   const bodyPartDescription = (
-    type === 'treasure'
+    kind === 'treasure'
     && (
       <>
         {bodyParts && getBodyPartsLocale(bodyParts)}
-        {subType === 'bigItem' && (<><br />Большой</>)}
+        {type === 'bigItem' && (<><br />Большой</>)}
       </>
     )
   );
-  const judgementDescriptions = judgement
-    ? judgement.map((item) => item.description).filter((item) => item)
+  const badStaffDescriptions = badStaff
+    ? badStaff.map((item) => item.description).filter((item) => item)
     : [];
   const raceDescription = race ? getRaceLocale(race) : undefined;
   const treasuresCount = typeof treasures === 'object' ? treasures.value : treasures;
@@ -90,27 +95,37 @@ const Card = ({
           'c-card--animated': animated,
           'c-card--close': !open,
           'c-card--disabled': empty,
-          'c-card--door': type === 'door',
+          'c-card--door': kind === 'door',
           'c-card--open': open,
           'c-card--scalable': open && scalable,
-          'c-card--treasure': type === 'treasure',
+          'c-card--treasure': kind === 'treasure',
           'c-card--zoomed': zoomed,
         },
       ])}
       data-position={position}
       onDragStart={() => setDraggedCard(props)}
       draggable={open}
+      onClick={onClick}
     >
       <div
         className="c-card__inner"
       >
+        {onClose && (
+          <div
+            className="c-card__close"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >&times;</div>
+        )}
         {open && !empty && (
           <div className="c-card__content">
             <div>
-              {type === 'treasure' && bonusDamage > 0 && (
+              {kind === 'treasure' && bonusDamage > 0 && (
                 <div className="c-card__damage">Бонус +{bonusDamage}</div>
               )}
-              {type === 'door' && level > 0 && (
+              {kind === 'door' && level > 0 && (
                 <div className="c-card__damage">Уровень {level}</div>
               )}
               {ruleDescriptions.length > 0 && (
@@ -125,9 +140,9 @@ const Card = ({
               {description && (
                 <div className="c-card__description" dangerouslySetInnerHTML={{ __html: description }} />
               )}
-              {judgementDescriptions.length > 0 && (
-                <div className="c-card__judgement">
-                  <b>Непотребство:</b> {judgementDescriptions.join(', ')}
+              {badStaffDescriptions.length > 0 && (
+                <div className="c-card__badStaff">
+                  <b>Непотребство:</b> {badStaffDescriptions.join(', ')}
                 </div>
               )}
             </div>
@@ -136,12 +151,12 @@ const Card = ({
                 {bodyPartDescription}
               </div>
             )}
-            {type === 'treasure' && cost && (
+            {kind === 'treasure' && cost && (
               <div className="c-card__cost">
                 <b>{cost} голдов</b>
               </div>
             )}
-            {type === 'door' && treasuresCount > 1 && (
+            {kind === 'door' && treasuresCount > 1 && (
               <div className="c-card__cost">
                 <b>{treasuresCount} {declOfNum(treasuresCount, ['сокровище', 'сокровища', 'сокровищ'])}</b>
               </div>

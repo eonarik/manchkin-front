@@ -2,37 +2,39 @@ export default {
   code: 'plague_rats',
   level: 5,
   name: 'Чумные крысы',
-  description: `От Орков бегут быстрее, чем набрасываются на всех прочих!<br />
-  Оркам сокровища крыс без боя достаются, а с другими надо биться,
-  а то и смываться со штрафом -1.`,
-  type: 'door',
-  subType: 'monster',
+  description: `От Орков бегут быстрее, чем набрасываются на всех прочих!\nОркам сокровища крыс без боя достаются, а с другими надо биться, а то и смываться со штрафом -1.`,
+  kind: 'door',
+  type: 'monster',
   properties: [
     {
       type: 'peace',
-      condition: ({ race }) => race === 'orc',
       target: 'enemy',
+      rules: [
+        {
+          type: 'race',
+          value: 'orc',
+        },
+      ],
     },
     {
       type: 'buff',
-      bonus: {
-        type: 'runaway',
-        value: -1,
-        target: 'enemy',
-      },
+      effect: 'runaway',
+      value: -1,
+      target: 'enemy',
     },
   ],
-  judgement: [
+  badStuff: [
     {
       type: 'curse',
-      bonus: {
-        type: 'level',
-        value: -2,
-        target: 'enemy',
-      },
+      effect: 'level',
+      value: -2,
+      target: 'enemy',
       description: 'Теряешь 2 уровня.',
     },
   ],
-  treasures: 2,
+  rewards: {
+    treasures: 2,
+    levels: 1,
+  },
   collection: 'classic',
 }

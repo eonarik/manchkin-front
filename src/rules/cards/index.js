@@ -56,7 +56,7 @@ export default {
 
 // type TargetType = 'leftPlayer' | 'all' | 'enemy' | 'self';
 
-// type CardType = 'action' | 'buff' | 'class' | 'monster' | 'smallItem' | 'bigItem' | 'single';
+// type CardType = 'action' | 'buff' | 'cls' | 'monster' | 'smallItem' | 'bigItem' | 'single';
 
 // type PropertyType = 'buff' | 'curse' | 'discard' | 'door' | 'level' | 'peace' | 'race' | 'runaway' | 'treasure';
 
