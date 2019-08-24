@@ -9,7 +9,7 @@ export default {
       type: 'buff',
       rules: [
         {
-          type: 'buff',
+          type: 'hasCard',
           target: 'self',
           value: 'titan',
         },
@@ -28,8 +28,7 @@ export default {
       target: 'enemy',
       rules: [
         {
-          type: 'race',
-          operand: 'not in',
+          type: 'notHasCard',
           value: 'elven',
         },
       ],
@@ -41,7 +40,7 @@ export default {
       target: 'enemy',
       rules: [
         {
-          type: 'race',
+          type: 'hasCard',
           value: 'elven',
         },
       ],

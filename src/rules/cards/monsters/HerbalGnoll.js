@@ -10,12 +10,6 @@ export default {
       effect: 'level',
       value: 5,
       target: 'self',
-      rules: [
-        {
-          type: 'race',
-          value: 'human',
-        },
-      ],
       description: `+5 против людей.`,
     },
   ],

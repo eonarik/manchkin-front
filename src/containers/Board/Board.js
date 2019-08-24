@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 
 import Deck from 'components/Deck';
 import Card from 'components/Card';

@@ -30,6 +30,10 @@ const itemsSlots = {
   },
 };
 const propertySlots = {
+  offSlot: {
+    code: 'offSlot',
+    name: 'Внеслотовые предметы',
+  },
   race: {
     code: 'race',
     name: 'Раса',

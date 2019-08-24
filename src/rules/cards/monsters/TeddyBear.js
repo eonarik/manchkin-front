@@ -10,7 +10,7 @@ export default {
       type: 'buff',
       rules: [
         {
-          type: 'race',
+          type: 'hasCard',
           value: 'orc',
         },
       ],

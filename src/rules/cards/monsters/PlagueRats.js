@@ -11,7 +11,7 @@ export default {
       target: 'enemy',
       rules: [
         {
-          type: 'race',
+          type: 'hasCard',
           value: 'orc',
         },
       ],

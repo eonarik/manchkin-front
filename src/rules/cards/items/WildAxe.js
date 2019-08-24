@@ -7,7 +7,7 @@ export default {
   bodyParts: ['rightHand', 'leftHand'],
   rules: [
     {
-      type: 'cls',
+      type: 'hasCard',
       value: 'warrior',
       description: 'Только для Воинов.',
     },

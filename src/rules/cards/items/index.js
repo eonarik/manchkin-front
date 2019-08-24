@@ -1,11 +1,24 @@
 export { default as BabyOil } from './BabyOil';
+export { default as BarbecueFork } from './BarbecueFork';
+export { default as BoomDagger } from './BoomDagger';
 export { default as ChainmailBikini } from './ChainmailBikini';
 export { default as CowardicePotion } from './CowardicePotion';
+export { default as Familiar } from './Familiar';
 export { default as FlightPotion } from './FlightPotion';
+export { default as GarageSale } from './GarageSale';
 export { default as ItchingPowder } from './ItchingPowder';
+export { default as LawnRoller } from './LawnRoller';
+export { default as LemmingJuice } from './LemmingJuice';
+export { default as LoadedDie1 } from './LoadedDie1';
+export { default as LoadedDie2 } from './LoadedDie2';
 export { default as NeededRing } from './NeededRing'; // TODO: отменяет проклятие
+export { default as OfDoom } from './OfDoom';
+export { default as PotionOfDisbelief } from './PotionOfDisbelief';
 export { default as Raincoat } from './Raincoat';
 export { default as RearViewHelmet } from './RearViewHelmet';
 export { default as SanctifiedHammerOfSaint } from './SanctifiedHammerOfSaint';
+export { default as TrojanHorse } from './TrojanHorse';
+export { default as TweezersOfTerror } from './TweezersOfTerror';
+export { default as VeryHolyBook } from './VeryHolyBook';
 export { default as WildAxe } from './WildAxe';
 export { default as YourShoelaceIsUntied } from './YourShoelaceIsUntied';

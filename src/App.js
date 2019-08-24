@@ -21,7 +21,7 @@ const mixDeck = shuffleArray(allCardsArray).map(
 // раздаем всем игрокам по 4 карты сокровищ и 4 карты дверей
 // принадлежность игроку будет определяться свойством playerIndex
 const playersCount = 6;
-for (let i = 1; i < playersCount; i++) {
+for (let i = 0; i < playersCount; i++) {
   for (let j = 0; j < 4; j++) {
     // вытащим первую ничейную карту двери
     let card = mixDeck.find((card) => card.playerIndex === undefined && card.kind === 'door');
@@ -41,14 +41,14 @@ for (let i = 1; i < playersCount; i++) {
 }
 
 // only for test!
-const handDeck = ['raincoat', 'chainmail_bikini'];
-// const handDeck = ['sanctified_hammer_of_saint', 'wild_axe', 'hand_slider'];
-// const handDeck = ['super_manchkin', 'rogue', 'warrior', 'wizard'];
-// const handDeck = ['mongrel', 'orc', 'dwarf', 'elven'];
-for (let i = 0; i < handDeck.length; i++) {
-  let card = mixDeck.find((card) => card.code === handDeck[i]);
-  card.playerIndex = 0;
-}
+// const handDeck = ['raincoat', 'chainmail_bikini'];
+// // const handDeck = ['sanctified_hammer_of_saint', 'wild_axe', 'hand_slider'];
+// // const handDeck = ['super_manchkin', 'rogue', 'warrior', 'wizard'];
+// // const handDeck = ['mongrel', 'orc', 'dwarf', 'elven'];
+// for (let i = 0; i < handDeck.length; i++) {
+//   let card = mixDeck.find((card) => card.code === handDeck[i]);
+//   card.playerIndex = 0;
+// }
 
 // проинициализируем всех игрроков
 const players = [];
@@ -67,8 +67,8 @@ const initialState = {
   draggedCard: null,
   // индекс игрока
   selfPlayerIndex: 0,
-  players,
   trashDeck: [],
+  players,
   mixDeck,
 };
 
@@ -156,7 +156,7 @@ function appReducer(state, { type, payload }) {
 
       // входит ли шмотка в список допустимых для одевания предметов
       if (
-        ['buff', 'cls', 'race', 'curse'].indexOf(cardType) !== -1
+        ['buff', 'cls', 'race', 'curse', 'offSlot'].indexOf(cardType) !== -1
         || (bodyParts && bodyParts.length)
       ) {
         // если указано, куда нужно одеть шмотку
