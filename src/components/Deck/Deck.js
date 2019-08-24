@@ -13,10 +13,24 @@ const Deck = () => {
   } = useContext(AppContext);
   return (
     <div className="c-deck">
-      <DeckCards type={'door'} cards={trashDeck.filter((card) => card.kind === 'door')} open />
-      <DeckCards type={'door'} cards={mixDeck.filter((card) => card.kind === 'door')} />
-      <DeckCards type={'treasure'} cards={mixDeck.filter((card) => card.kind === 'treasure')} />
-      <DeckCards type={'treasure'} cards={trashDeck.filter((card) => card.kind === 'treasure')} open />
+      <DeckCards
+        kind={'door'}
+        cards={trashDeck.filter((card) => card.kind === 'door' && card.playerIndex === undefined)}
+        open
+      />
+      <DeckCards
+        kind={'door'}
+        cards={mixDeck.filter((card) => card.kind === 'door' && card.playerIndex === undefined)}
+      />
+      <DeckCards
+        kind={'treasure'}
+        cards={mixDeck.filter((card) => card.kind === 'treasure' && card.playerIndex === undefined)}
+      />
+      <DeckCards
+        kind={'treasure'}
+        cards={trashDeck.filter((card) => card.kind === 'treasure' && card.playerIndex === undefined)}
+        open
+      />
     </div>
   );
 }

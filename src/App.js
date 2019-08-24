@@ -9,9 +9,6 @@ export const AppContext = createContext();
 
 // начало игры. размешиваем колоду
 const allCardsArray = Object.values(cards);
-// удвоим карты
-allCardsArray.push(...allCardsArray);
-allCardsArray.push(...allCardsArray);
 
 // перемешаем колоду, заодно добавим id для каждой карты
 const mixDeck = shuffleArray(allCardsArray).map(

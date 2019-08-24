@@ -4,6 +4,7 @@ import Card from 'components/Card';
 import { AppContext } from 'App';
 
 const DeckCards = ({
+  kind,
   cards,
   open,
 }) => {
@@ -31,6 +32,7 @@ const DeckCards = ({
       onDrop={dragDrop}
     >
       <Card
+        kind={kind}
         {...cards[cards.length - 1]}
         empty={!cards || !cards.length}
         open={open}

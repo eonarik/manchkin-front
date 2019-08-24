@@ -68,7 +68,18 @@ const Card = ({
   } = props;
   const { setDraggedCard } = useContext(AppContext);
 
-  const bonusDamage = typeof bonus === 'object' ? bonus.value : bonus;
+  const bonusDamageDescription = (
+    bonus && (
+      typeof bonus === 'object'
+        ? (
+          <>
+            {bonus.male && `Мужчинам бонус +${bonus.male}`}<br />
+            {bonus.female && `Женщинам бонус +${bonus.female}`}
+          </>
+        )
+        : `Бонус +${bonus}`
+    )
+  );
   const ruleDescriptions = rules
     ? rules.map((item) => item.description)
     : [];
@@ -122,8 +133,8 @@ const Card = ({
         {open && !empty && (
           <div className="c-card__content">
             <div>
-              {kind === 'treasure' && bonusDamage > 0 && (
-                <div className="c-card__damage">Бонус +{bonusDamage}</div>
+              {kind === 'treasure' && bonusDamageDescription && (
+                <div className="c-card__damage">{bonusDamageDescription}</div>
               )}
               {kind === 'door' && level > 0 && (
                 <div className="c-card__damage">Уровень {level}</div>
