@@ -39,14 +39,7 @@ const ManchkinItem = ({
   }
 
   const summaryDamage = (
-    makedItems && makedItems.reduce(
-      (sum, cur) => (
-        typeof cur.bonus === 'object'
-          ? cur.bonus.type === 'damage' && sum + cur.bonus.value
-          : sum + (cur.bonus || 0)
-      ),
-      0
-    )
+    makedItems && makedItems.reduce((sum, cur) => sum + cur.actualDamage, 0)
   ) || undefined;
 
   return (
@@ -62,7 +55,14 @@ const ManchkinItem = ({
       onDragOver={dragOver}
       onDrop={dragDrop}
     >
-      <div className="c-manchkin__item__title">{name}</div>
+      <div className="c-manchkin__item__title">
+        {name}
+        {summaryDamage > 0 && (
+          <span className="c-manchkin__item__summary">
+            &nbsp;+{summaryDamage}
+          </span>
+        )}
+      </div>
       {makedItems.map((card) => (
         <Card
           key={card.id}
@@ -73,11 +73,6 @@ const ManchkinItem = ({
           open
         />
       ))}
-      {summaryDamage > 0 && (
-        <div className="c-manchkin__item__summary">
-          +{summaryDamage}
-        </div>
-      )}
     </div>
   );
 }

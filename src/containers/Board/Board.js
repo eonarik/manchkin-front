@@ -55,10 +55,12 @@ const Board = () => {
         </div>
       </div>
 
-      <Manchkin
-        close={() => setDummyOpened(false)}
-        showed={dummyOpened}
-      />
+      {dummyOpened && (
+        <Manchkin
+          close={() => setDummyOpened(false)}
+          showed={dummyOpened}
+        />
+      )}
     </>
   );
 }

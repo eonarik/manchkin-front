@@ -7,6 +7,7 @@ export default {
   bonus: {
     female: 4,
     male: 2,
+    description: `Женщинам бонус +4\nмужчинам +2`
   },
   cost: 600,
   collection: 'classic',

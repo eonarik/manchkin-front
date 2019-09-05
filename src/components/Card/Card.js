@@ -58,6 +58,7 @@ const Card = ({
     cost,
     description,
     badStaff,
+    id,
     kind,
     level,
     name,
@@ -66,17 +67,15 @@ const Card = ({
     treasures,
     type,
   } = props;
-  const { setDraggedCard } = useContext(AppContext);
+  const {
+    draggedCard,
+    setDraggedCard
+  } = useContext(AppContext);
 
   const bonusDamageDescription = (
     bonus && (
       typeof bonus === 'object'
-        ? (
-          <>
-            {bonus.male && `Мужчинам бонус +${bonus.male}`}<br />
-            {bonus.female && `Женщинам бонус +${bonus.female}`}
-          </>
-        )
+        ? bonus.description
         : `Бонус +${bonus}`
     )
   );
@@ -105,6 +104,7 @@ const Card = ({
         {
           'c-card--animated': animated,
           'c-card--close': !open,
+          'c-card--hidden': draggedCard && draggedCard.id === id,
           'c-card--disabled': empty,
           'c-card--door': kind === 'door',
           'c-card--open': open,

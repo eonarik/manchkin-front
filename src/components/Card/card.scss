@@ -4,6 +4,7 @@
   user-select: none;
   min-width: 32px;
   min-height: 32px;
+  white-space: pre-line;
     
   &--close {
     > .c-card__inner {
@@ -48,6 +49,11 @@
   &--disabled {
     opacity: 0.5;
   }
+
+  // TODO: сделать скрытие карты при перетаскивании
+  // &--hidden {
+  //   visibility: hidden;
+  // }
 
   &--treasure {
     > .c-card__inner {
@@ -111,12 +117,11 @@
     margin-top: 2px;
   }
 
-  &__description {
-    white-space: pre-line;
-  }
+  // &__description {
+  // }
   
   &__damage {
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 600;
   }
 

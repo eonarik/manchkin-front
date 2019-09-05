@@ -17,7 +17,7 @@ const mixDeck = shuffleArray(allCardsArray).map(
 
 // раздаем всем игрокам по 4 карты сокровищ и 4 карты дверей
 // принадлежность игроку будет определяться свойством playerIndex
-const playersCount = 6;
+const playersCount = 2;
 for (let i = 0; i < playersCount; i++) {
   for (let j = 0; j < 4; j++) {
     // вытащим первую ничейную карту двери
@@ -38,7 +38,7 @@ for (let i = 0; i < playersCount; i++) {
 }
 
 // only for test!
-// const handDeck = ['raincoat', 'chainmail_bikini'];
+// const handDeck = ['cute_shoulder_dragon', 'spiked_codpeice'];
 // // const handDeck = ['sanctified_hammer_of_saint', 'wild_axe', 'hand_slider'];
 // // const handDeck = ['super_manchkin', 'rogue', 'warrior', 'wizard'];
 // // const handDeck = ['mongrel', 'orc', 'dwarf', 'elven'];
@@ -52,6 +52,7 @@ const players = [];
 for (let i = 0; i < playersCount; i++) {
   players.push({
     level: 1,
+    gender: 'male',
     blockedSlots: [],
   });
 }
@@ -93,12 +94,14 @@ function appReducer(state, { type, payload }) {
       // уберем карты в руку
       // убирая свойство makedSlot
       delete card.makedSlot;
+      delete card.actualDamage;
     }
   }
   const makeItem = (card, bodyPart) => {
     // проверим есть ли уже шмотки в указанном слоте
+    // исключение - слот offSlot
     let makedItems = selfDeck.filter((card) => card.makedSlot === bodyPart);
-    if (makedItems && makedItems.length) {
+    if (bodyPart !== 'offSlot' && makedItems && makedItems.length) {
       // специальные условия
       // суперманчкин - позволяет надеть сразу два класса
       let isSuperManchkin = (
@@ -135,6 +138,24 @@ function appReducer(state, { type, payload }) {
       if (itemsOfBlockedSlot && itemsOfBlockedSlot.length) {
         returnCardsToHand(itemsOfBlockedSlot);
       }
+    }
+    // актуализируем дамаг шмотки
+    const bonus = card.bonus;
+    let actualDamage = 0;
+    if (typeof bonus === 'object') {
+      // { type, value }
+      if (bonus.type && bonus.type === 'damage') {
+        actualDamage += parseInt(bonus.value);
+      }
+      // { male, female }
+      if (bonus.male || bonus.female) {
+        actualDamage += parseInt(bonus[selfPlayer.gender] || 0);
+      }
+    } else {
+      actualDamage += parseInt(bonus);
+    }
+    if (actualDamage > 0) {
+      card.actualDamage = actualDamage;
     }
   }
 
@@ -184,53 +205,6 @@ function appReducer(state, { type, payload }) {
         // при неудаче НЕ обновляем стейты
         return state;
       }
-
-      console.log(newItem)
-      console.log(selfDeck)
-
-      // // если это карта расы
-      // if (subType === 'race') {
-      //   let races = state.player.slots.race;
-      //   let buffs = state.player.slots.buffs;
-      //   if (!races.find((item) => item.code === code)) {
-      //     // рас может быть две, только если вы полукровка
-      //     if (buffs.find((item) => item.code === 'mongrel')) {
-      //       races.push(newItem);
-      //     } else {
-      //       // вернем в руку предыдущую расу
-      //       races.length && selfDeck.push(races.shift());
-      //       races.push(newItem);
-      //     }
-      //     // удаляем c руки
-      //     removeCardFromHandDeck(newItem.id);
-      //   }
-      // }
-      // // если это карта класса
-      // if (subType === 'cls') {
-      //   let clses = state.player.slots.cls;
-      //   let buffs = state.player.slots.buffs;
-      //   if (!clses.find((item) => item.code === code)) {
-      //     // классов может быть два, только если вы суперманчкин
-      //     if (buffs.find((item) => item.code === 'super_manchkin')) {
-      //       clses.push(newItem);
-      //     } else {
-      //       // вернем в руку предыдущий класс
-      //       clses.length && selfDeck.push(clses.shift());
-      //       clses.push(newItem);
-      //     }
-      //     // удаляем c руки
-      //     removeCardFromHandDeck(newItem.id);
-      //   }
-      // }
-      // // если это положительный эффект
-      // if (subType === 'buff') {
-      //   let buffs = state.player.slots.buffs;
-      //   if (!buffs.find((item) => item.code === code)) {
-      //     buffs.push(newItem);
-      //     // удаляем c руки
-      //     removeCardFromHandDeck(newItem.id);
-      //   }
-      // }
       return {
         ...state,
       };
@@ -246,6 +220,7 @@ function appReducer(state, { type, payload }) {
       // тем самым удаляя из руки или инвентаря
       delete card.playerIndex;
       delete card.makedSlot;
+      delete card.actualDamage;
       // добавим карту в сброс
       state.trashDeck.push(card);
       // также удалим карту из используемых карт
