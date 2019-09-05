@@ -68,7 +68,7 @@ const ManchkinItem = ({
           key={card.id}
           {...card}
           maked={code}
-          onClose={() => discard(card.id)}
+          onClose={() => discard(card)}
           position={'top'}
           open
         />

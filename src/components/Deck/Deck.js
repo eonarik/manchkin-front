@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import DeckCards from './DeckCards';
 
-import { AppContext } from 'App';
+import { GameContext } from 'containers/Game';
 
 import './deck.scss';
 
@@ -10,7 +10,7 @@ const Deck = () => {
   const {
     mixDeck,
     trashDeck,
-  } = useContext(AppContext);
+  } = useContext(GameContext);
   return (
     <div className="c-deck">
       <DeckCards

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 
 import Card from 'components/Card';
-import { AppContext } from 'App';
+
+import { GameContext } from 'containers/Game';
 
 const DeckCards = ({
   kind,
@@ -11,10 +12,10 @@ const DeckCards = ({
   const {
     draggedCard,
     discard,
-  } = useContext(AppContext);
+  } = useContext(GameContext);
 
   const dragDrop = () => {
-    discard(draggedCard.id);
+    discard(draggedCard);
   }
   const dragEnter = (event) => {
     event.preventDefault();

@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import Deck from 'components/Deck';
 import Card from 'components/Card';
 import Manchkin from 'containers/Manchkin';
 
-import { AppContext } from 'App';
+import { GameContext } from 'containers/Game';
 
 import './board.scss';
 
@@ -15,9 +15,19 @@ const Board = () => {
     makeNewItem,
     mixDeck,
     players,
+    shuffleDeck,
     selfPlayerIndex,
     setDraggedCard,
-  } = useContext(AppContext);
+    startHandOutCards,
+  } = useContext(GameContext);
+
+  useEffect(() => {
+    // размешаем колоду
+    shuffleDeck();
+    // раздадим по стартовому набору
+    startHandOutCards();
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>
@@ -40,8 +50,11 @@ const Board = () => {
                 <Card
                   key={card.id}
                   {...card}
-                  onClick={() => makeNewItem(card.id, card.bodyParts && card.bodyParts[0])}
-                  onClose={selfPlayerIndex === card.playerIndex ? () => discard(card.id) : null}
+                  onClick={() => makeNewItem({
+                    id: card.id,
+                    bodyPart: card.bodyParts && card.bodyParts[0]
+                  })}
+                  onClose={selfPlayerIndex === card.playerIndex ? () => discard(card) : null}
                   open={selfPlayerIndex === playerIndex}
                   animated={selfPlayerIndex === playerIndex}
                   position={selfPlayerIndex === playerIndex ? 'bottom' : 'top'}

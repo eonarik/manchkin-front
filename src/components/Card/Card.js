@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { cn, declOfNum } from 'utils';
 
-import { AppContext } from 'App';
+import { GameContext } from 'containers/Game';
 
 import './card.scss';
 
@@ -70,7 +70,7 @@ const Card = ({
   const {
     draggedCard,
     setDraggedCard
-  } = useContext(AppContext);
+  } = useContext(GameContext);
 
   const bonusDamageDescription = (
     bonus && (

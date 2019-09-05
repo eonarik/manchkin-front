@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { AppContext } from 'App';
+import { GameContext } from 'containers/Game';
 import { cn } from 'utils';
 
 import ManchkinItem from './ManchkinItem';
@@ -64,12 +64,15 @@ const Manchkin = ({
     players,
     selfPlayerIndex,
     setDraggedCard,
-  } = useContext(AppContext);
+  } = useContext(GameContext);
   const { blockedSlots } = players[selfPlayerIndex];
 
   const makeCard = (card, bodyPart) => {
     // добавим новый предмет
-    makeNewItem(card.id, bodyPart);
+    makeNewItem({
+      id: card.id,
+      bodyPart,
+    });
     // обнулим draggedCard
     setDraggedCard(null);
   }
